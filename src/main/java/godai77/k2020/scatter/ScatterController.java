@@ -1,11 +1,11 @@
 package godai77.k2020.scatter;
 
-import godai77.k2020.scatter.model.ScatterRequest;
 import godai77.k2020.scatter.model.ScatterStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,16 +24,18 @@ public class ScatterController {
     @GetMapping("/scatter/{amount}/{memberCnt}")
     public String scatter(HttpServletRequest request, @PathVariable(name = "amount") Long amount, @PathVariable("memberCnt") Long memberCnt) {
         log.info("[scatter] user={}, room={}, amount={}, memberCnt={}", null, null, amount, memberCnt);
-        return "scatter token";
+        return "scatter Token";
     }
 
-    @PostMapping("/pickup")
-    public Integer pickup(HttpServletRequest request, @RequestBody String scatterId) {
+    @GetMapping("/pickup/{scatterToken}")
+    public Integer pickup(HttpServletRequest request, @PathVariable(name = "scatterToken") String scatterToken) {
+        log.info("[pickup] user={}, room={}, scatterToken={}", null, null, scatterToken);
         return 10;
     }
 
-    @PostMapping("/status")
-    public ScatterStatus status(HttpServletRequest request, @RequestBody String scatterId) {
+    @GetMapping("/status/{scatterToken}")
+    public ScatterStatus status(HttpServletRequest request, @PathVariable(name = "scatterToken") String scatterToken) {
+        log.info("[status] user={}, room={}, scatterToken={}", null, null, scatterToken);
         return null;
     }
 }
