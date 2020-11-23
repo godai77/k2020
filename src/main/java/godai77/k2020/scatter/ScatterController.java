@@ -1,8 +1,10 @@
 package godai77.k2020.scatter;
 
+import godai77.k2020.scatter.model.ScatterResponse;
 import godai77.k2020.scatter.model.ScatterStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,20 +24,57 @@ public class ScatterController {
     }
 
     @GetMapping("/scatter/{amount}/{memberCnt}")
-    public String scatter(HttpServletRequest request, @PathVariable(name = "amount") Long amount, @PathVariable("memberCnt") Long memberCnt) {
-        log.info("[scatter] user={}, room={}, amount={}, memberCnt={}", null, null, amount, memberCnt);
-        return "scatter Token";
+    public ScatterResponse<String> scatter(HttpServletRequest request, @PathVariable(name = "amount") Long amount, @PathVariable("memberCnt") Integer memberCnt) {
+        Long userId;
+        String roomId;
+
+        try {
+            userId = Long.parseLong(request.getHeader("X-USER-ID"));
+            roomId = request.getHeader("X-ROOM-ID");
+        }
+        catch (Exception e) {
+            return new ScatterResponse<>(null, HttpStatus.BAD_REQUEST, "Invalid request header(s)!");
+        }
+
+        log.info("[scatter] userId={}, room={}, amount={}, memberCnt={}", userId, roomId, amount, memberCnt);
+
+        return scatterService.scatter(userId, roomId, amount, memberCnt) ;
     }
 
     @GetMapping("/pickup/{scatterToken}")
-    public Integer pickup(HttpServletRequest request, @PathVariable(name = "scatterToken") String scatterToken) {
-        log.info("[pickup] user={}, room={}, scatterToken={}", null, null, scatterToken);
-        return 10;
+    public ScatterResponse<Integer> pickup(HttpServletRequest request, @PathVariable(name = "scatterToken") String scatterToken) {
+        Long userId;
+        String roomId;
+
+        try {
+            userId = Long.parseLong(request.getHeader("X-USER-ID"));
+            roomId = request.getHeader("X-ROOM-ID");
+        }
+        catch (Exception e) {
+            return new ScatterResponse<>(null, HttpStatus.BAD_REQUEST, "Invalid request header(s)!");
+        }
+
+        log.info("[pickup] X-USER-ID={}, room={}, scatterToken={}", userId, roomId, scatterToken);
+
+        return scatterService.pickup(userId, roomId, scatterToken);
     }
 
     @GetMapping("/status/{scatterToken}")
-    public ScatterStatus status(HttpServletRequest request, @PathVariable(name = "scatterToken") String scatterToken) {
-        log.info("[status] user={}, room={}, scatterToken={}", null, null, scatterToken);
-        return null;
+    public ScatterResponse<ScatterStatus> status(HttpServletRequest request, @PathVariable(name = "scatterToken") String scatterToken) {
+        Long userId;
+        String roomId;
+
+        try {
+            userId = Long.parseLong(request.getHeader("X-USER-ID"));
+            roomId = request.getHeader("X-ROOM-ID");
+        }
+        catch (Exception e) {
+            return new ScatterResponse<>(null, HttpStatus.BAD_REQUEST, "Invalid request header(s)!");
+        }
+
+        log.info("[status] X-USER-ID={}, room={}, scatterToken={}", userId, roomId, scatterToken);
+
+
+        return scatterService.status(userId, roomId, scatterToken);
     }
 }
